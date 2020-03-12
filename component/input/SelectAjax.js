@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Select } from 'antd';
-import { objectEquals } from 'utils/functionUtil';
+import { objectEquals } from 'react-uikit/utils/functionUtil';
 
 const { Option } = Select;
 export default class SelectAjax extends Component {

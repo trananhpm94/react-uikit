@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { DatePicker } from 'antd';
-import { dateToStringParamReq, stringParamReqToDate, DATE_SHOW_UI } from 'utils/formatUtil';
+import {
+  dateToStringParamReq,
+  stringParamReqToDate,
+  DATE_SHOW_UI,
+} from 'react-uikit/utils/formatUtil';
 
 export default class DatePickerString extends Component {
   state = {
