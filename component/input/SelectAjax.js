@@ -1,16 +1,25 @@
 import React, { Component } from 'react';
 import { Select } from 'antd';
 import { objectEquals } from 'react-uikit/utils/functionUtil';
+import { SelectAjax as defaultConfig } from 'react-uikit/config';
+
+let defaultProps = defaultConfig;
+try {
+  const { SelectAjax: customConfig } = require('react-uikit-config').default;
+  defaultProps = { ...defaultProps, ...customConfig };
+} catch (e) {}
 
 const { Option } = Select;
 export default class SelectAjax extends Component {
   static defaultProps = {
     keyValue: 'id',
-    keyLabel: 'label',
+    keyLabel: 'name',
+    handleGetDataResponse: res => res.data.content,
     allowClear: true,
     allowGetData: true,
     allowGetObjSelected: false,
     typeValue: 'string',
+    ...defaultConfig,
   };
   state = {
     data: [],
@@ -78,7 +87,7 @@ export default class SelectAjax extends Component {
 
   actionGetData = async (props = {}) => {
     this.removeValue();
-    const { allowGetData, params } = props;
+    const { allowGetData, params, service, handleGetDataResponse } = props;
     if (!allowGetData) {
       this.setState({
         data: [],
@@ -88,8 +97,8 @@ export default class SelectAjax extends Component {
     this.setState({
       loading: true,
     });
-    const res = await this.props.service({ ...params, isPagingEnabled: false });
-    const data = res.data.items;
+    const res = await service({ ...params });
+    const data = handleGetDataResponse(res);
     this.setState(
       {
         data,
