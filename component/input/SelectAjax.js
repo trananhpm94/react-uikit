@@ -5,7 +5,7 @@ import { SelectAjax as defaultConfig } from 'react-uikit/config';
 
 let defaultProps = defaultConfig;
 try {
-  const { SelectAjax: customConfig } = require('react-uikit-config').default;
+  const { SelectAjax: customConfig } = require('react-uikit-config');
   defaultProps = { ...defaultProps, ...customConfig };
 } catch (e) {}
 
@@ -19,6 +19,7 @@ export default class SelectAjax extends Component {
     allowGetData: true,
     allowGetObjSelected: false,
     typeValue: 'string',
+    disabled: false,
     ...defaultConfig,
   };
   state = {
