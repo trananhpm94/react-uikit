@@ -39,7 +39,7 @@ export default class SelectAjax extends Component {
   };
 
   setObjSelected = value => {
-    const { allowGetObjSelected, form } = this.props;
+    const { allowGetObjSelected } = this.props;
     if (!allowGetObjSelected) {
       return;
     }
@@ -70,8 +70,8 @@ export default class SelectAjax extends Component {
   };
 
   createFieldObjSelected = () => {
-    const { allowGetObjSelected, form } = this.props;
-    if (!allowGetObjSelected && !form) {
+    const { allowGetObjSelected } = this.props;
+    if (!allowGetObjSelected) {
       return;
     }
     const { getFieldDecorator } = this.props.form;
