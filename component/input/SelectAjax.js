@@ -80,7 +80,8 @@ export default class SelectAjax extends Component {
 
   removeValue = () => {
     const { name: fieldName } = this.props['data-__field'];
-    const { setFieldsValue, value } = this.props;
+    const { value } = this.props;
+    const { setFieldsValue } = this.props.form;
     if (value && setFieldsValue) {
       setFieldsValue({ [fieldName]: undefined });
     }
