@@ -40,7 +40,7 @@ export default class SelectAjax extends Component {
 
   setObjSelected = value => {
     const { allowGetObjSelected, form } = this.props;
-    if (!allowGetObjSelected || !form) {
+    if (!allowGetObjSelected) {
       return;
     }
     const { setFieldsValue } = this.props.form;
