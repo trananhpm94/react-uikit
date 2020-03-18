@@ -16,17 +16,17 @@ export const sealObject = (objDefault = {}, ...objValues) => {
 
 export default entityDefault => ({
   replaces: produce((state, entities = []) => {
-    entities.forEach(entity => {
+    (entities || []).forEach(entity => {
       state.ids[entity.id] = sealObject(entityDefault, entity);
     });
   }),
   saves: produce((state, entities = []) => {
-    entities.forEach(entity => {
+    (entities || []).forEach(entity => {
       state.ids[entity.id] = sealObject(entityDefault, state.ids[entity.id], entity);
     });
   }),
   deletes: produce((state, entities = []) => {
-    entities.forEach(entity => {
+    (entities || []).forEach(entity => {
       delete state.ids[entity.id];
     });
   }),
