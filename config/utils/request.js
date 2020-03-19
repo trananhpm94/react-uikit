@@ -2,9 +2,13 @@ import { message } from 'antd';
 export default {
   // default exception ApiError
   handleRequestError: response => {
-    if (!response || !response.data || !response.data.message || response.data.message === '') {
+    if (!response || !response.data) {
       return;
     }
-    message.error(response.data.message);
+    const { apierror } = response.data;
+    if (!apierror || apierror.message === '') {
+      return;
+    }
+    message.error(apierror.message);
   },
 };
