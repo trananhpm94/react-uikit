@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { message } from 'antd';
 import { getConfig } from 'react-uikit/utils/uikitConfig';
 
 const requestConfig = getConfig('utils/request');
