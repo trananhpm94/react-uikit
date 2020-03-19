@@ -1,13 +1,7 @@
 import React, { Component } from 'react';
 import { Select } from 'antd';
 import { objectEquals } from 'react-uikit/utils/functionUtil';
-import { SelectAjax as defaultConfig } from 'react-uikit/config';
-
-let defaultProps = defaultConfig;
-try {
-  const { SelectAjax: customConfig } = require('react-uikit-config');
-  defaultProps = { ...defaultProps, ...customConfig };
-} catch (e) {}
+import { getConfig } from 'react-uikit/utils/uikitConfig';
 
 const { Option } = Select;
 export default class SelectAjax extends Component {
@@ -20,7 +14,7 @@ export default class SelectAjax extends Component {
     allowGetObjSelected: false,
     typeValue: 'string',
     disabled: false,
-    ...defaultConfig,
+    ...getConfig('component/input/SelectAjax'),
   };
   state = {
     data: [],

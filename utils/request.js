@@ -1,44 +1,28 @@
-import axios from "axios";
-import { message } from "antd";
+import axios from 'axios';
+import { message } from 'antd';
+import { getConfig } from 'react-uikit/utils/uikitConfig';
 
-export const hostAPI = process.env.REACT_APP_BE;
+const requestConfig = getConfig('utils/request');
+
+export const HOST_API = process.env.REACT_APP_HOST_API || window.location.origin;
 
 export const getHeaderAuthorization = token => {
-  const t = !token ? window.localStorage.getItem("app.token") : token;
+  const t = !token ? window.localStorage.getItem('app.token') : token;
   return { authorization: `Bearer ${t}` };
 };
 
-const messageErrorTrans = {};
-
-const handleMessageError = response => {
-  if (
-    !response ||
-    !response.status ||
-    !response.data ||
-    !response.data.reason
-  ) {
+const handleRequestError = (response, props) => {
+  if (props.handleRequestError) {
+    props.handleRequestError(response);
     return;
   }
-  const { status } = response;
-  let { reason } = response.data;
-  if (status === 422) {
-    console.error(status);
-  }
-  if (status === 500) {
-    const messageReason = messageErrorTrans[reason] || reason;
-    reason = messageReason;
-  }
-
-  if (!reason || reason === "") {
-    reason = "Đã có lỗi xảy ra.Vui lòng thử lại.";
-  }
-  message.error(reason);
+  requestConfig.handleRequestError(response);
 };
 
 export const request = async ({
-  prefix,
-  url = "",
-  method = "get",
+  host = false,
+  url = '',
+  method = 'get',
   params,
   data,
   headers = {},
@@ -46,73 +30,63 @@ export const request = async ({
 }) => {
   try {
     const result = await axios({
-      url: `${hostAPI}${prefix || request.prefix || ""}${url}`,
+      url: `${host ? host : HOST_API}${url}`,
       method,
       data,
       params,
       headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
         ...getHeaderAuthorization(),
-        ...headers
+        ...headers,
       },
-      ...props
+      ...props,
     });
     return result;
   } catch (err) {
-    console.log("err", err);
+    console.error('err', err);
     const { response } = err;
     if (response && response.status === 401) {
-      // window.localStorage.clear();
-      window.localStorage.setItem("app.Authorization", "");
-      window.localStorage.setItem("app.Role", "");
-      window.localStorage.setItem("app.token", "");
-      window.location.hash = "#login";
+      window.localStorage.setItem('app.token', '');
     }
-    handleMessageError(response);
+    handleRequestError(response, props);
     throw err;
   }
 };
 
 export const requestDownload = async ({
-  defaultFileName = "fileDownload",
+  defaultFileName = 'fileDownload',
   headers = {},
   ...props
 }) => {
   try {
     const res = await request({
       ...props,
-      responseType: "blob",
+      responseType: 'blob',
       headers: {
-        Accept: "*/*",
-        ...headers
-      }
+        Accept: '*/*',
+        ...headers,
+      },
     });
     const url = window.URL.createObjectURL(new Blob([res.data]));
-    console.log(res);
-    console.log("res.data", res.data);
-    const link = document.createElement("a");
+    const link = document.createElement('a');
 
     link.href = url;
     let fileName = defaultFileName;
-    if (res.headers && res.headers["content-disposition"]) {
-      const contentDisposition = res.headers["content-disposition"];
-      const indexFileName = contentDisposition.indexOf("filename=");
+    if (res.headers && res.headers['content-disposition']) {
+      const contentDisposition = res.headers['content-disposition'];
+      const indexFileName = contentDisposition.indexOf('filename=');
       if (indexFileName >= 0) {
-        fileName = contentDisposition.substring(
-          indexFileName,
-          contentDisposition.length
-        );
-        fileName = fileName.replace('filename="', "");
-        fileName = fileName.replace("filename=", "");
+        fileName = contentDisposition.substring(indexFileName, contentDisposition.length);
+        fileName = fileName.replace('filename="', '');
+        fileName = fileName.replace('filename=', '');
       }
       let indexLastFilename = fileName.indexOf(`"`);
-      indexLastFilename =
-        indexLastFilename === -1 ? fileName.length : indexLastFilename;
+      indexLastFilename = indexLastFilename === -1 ? fileName.length : indexLastFilename;
       fileName = fileName.substring(0, indexLastFilename);
     }
-    link.setAttribute("download", fileName);
+    link.setAttribute('download', fileName);
     document.body.appendChild(link);
     link.click();
     return res;
@@ -121,7 +95,7 @@ export const requestDownload = async ({
       const reader = new FileReader();
       reader.onload = () => {
         err.response.data = JSON.parse(reader.result);
-        handleMessageError(err.response);
+        handleRequestError(err.response, props);
         resolve(Promise.reject(err));
       };
       reader.onerror = () => {
