@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Table, Form } from 'antd';
-import { BtnEdit, BtnSave, BtnCancel } from '../button';
+import { BtnEdit, BtnSave, BtnCancel } from '../../button';
 import EditableCell, { EditableContext } from './EditableCell';
 
 class TableData extends Component {
