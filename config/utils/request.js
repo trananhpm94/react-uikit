@@ -1,5 +1,5 @@
 import { message } from 'antd';
-export const request = {
+export default {
   // default exception ApiError
   handleRequestError: response => {
     if (!response || !response.data || !response.data.message || response.data.message === '') {
