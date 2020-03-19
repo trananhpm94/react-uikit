@@ -1,3 +1,4 @@
+import { message } from 'antd';
 export const request = {
   // default exception ApiError
   handleRequestError: response => {

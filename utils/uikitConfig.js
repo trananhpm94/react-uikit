@@ -1,7 +1,7 @@
 export const getConfig = path => {
-  let defaultConfig = require('react-uikit/' + path).default;
+  let defaultConfig = require('react-uikit/config/' + path).default;
   try {
-    const customConfig = require('react-uikit-config/' + path);
+    const customConfig = require('react-uikit-config/' + path).default;
     defaultConfig = { ...defaultConfig, ...customConfig };
   } catch (e) {}
   return defaultConfig;
