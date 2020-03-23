@@ -1,3 +1,7 @@
+export const isPlainObject = o => {
+  return o === null || Array.isArray(o) || typeof o == 'function' ? false : typeof o == 'object';
+};
+
 export const pick = (sourceObject, keys) => {
   if (!sourceObject) {
     return sourceObject;
@@ -6,10 +10,12 @@ export const pick = (sourceObject, keys) => {
   (keys || []).forEach(key => {
     if (typeof key === 'string') {
       newObject[key] = sourceObject[key];
-    } else if (typeof key === 'object') {
+    } else if (isPlainObject(key)) {
       Object.entries(key).forEach(([oldKey, newKey]) => {
         newObject[newKey] = sourceObject[oldKey];
       });
+    } else if (Array.isArray(key) && key.length === 2) {
+      newObject[key[0]] = sourceObject[key[1]];
     }
   });
   return newObject;
