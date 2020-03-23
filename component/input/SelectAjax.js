@@ -123,6 +123,15 @@ export default class SelectAjax extends Component {
     this.setObjSelected(value);
   };
 
+  handleSearch = value => {
+    const { getParamOnSearch } = this.props;
+    if (!getParamOnSearch) {
+      return;
+    }
+    const paramSearch = getParamOnSearch(value);
+    this.actionGetData(this.props, paramSearch);
+  };
+
   render() {
     const { data, loading } = this.state;
     this.createFieldObjSelected();
@@ -135,6 +144,7 @@ export default class SelectAjax extends Component {
           option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
         }
         {...this.props}
+        onSearch={this.handleSearch}
         onChange={this.handleSelectChange}
       >
         {data.map(item => (
