@@ -81,7 +81,7 @@ export default class SelectAjax extends Component {
     }
   };
 
-  actionGetData = async (props = {}) => {
+  actionGetData = async (props = {}, paramSearch = {}) => {
     this.removeValue();
     const { allowGetData, params, service, handleGetDataResponse } = props;
     if (!allowGetData) {
@@ -93,7 +93,7 @@ export default class SelectAjax extends Component {
     this.setState({
       loading: true,
     });
-    const res = await service({ ...params });
+    const res = await service({ ...params, ...paramSearch });
     const data = handleGetDataResponse(res);
     this.setState(
       {
