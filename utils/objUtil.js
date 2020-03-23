@@ -15,7 +15,7 @@ export const pick = (sourceObject, keys) => {
         newObject[newKey] = sourceObject[oldKey];
       });
     } else if (Array.isArray(key) && key.length === 2) {
-      newObject[key[0]] = sourceObject[key[1]];
+      newObject[key[1]] = sourceObject[key[0]];
     }
   });
   return newObject;
