@@ -95,6 +95,7 @@ export default class SelectAjax extends Component {
     });
     const res = await service({ ...params, ...paramSearch });
     const data = handleGetDataResponse(res);
+    console.log('res', data);
     this.setState(
       {
         data,
@@ -134,6 +135,7 @@ export default class SelectAjax extends Component {
 
   render() {
     const { data, loading } = this.state;
+    console.log('state', data);
     this.createFieldObjSelected();
     return (
       <Select
