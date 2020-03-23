@@ -6,8 +6,6 @@ export default class InputOnlyNumber extends Component {
   // eslint-disable-next-line consistent-return
   onChange = e => {
     const { value } = e.target;
-    console.log('value', value);
-    if (parseInt(value) > 100 && this.props.persent) return false;
     const reg = /^-?(0|[1-9][0-9]*)(\.[0-9]*)?$/;
     if ((!Number.isNaN(value) && reg.test(value)) || value === '') {
       this.props.onChange(value);
