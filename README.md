@@ -5,7 +5,7 @@
 cd src
 git submodule add https://github.com/trananhpm94/react-uikit.git
 git config submodule.react-uikit.ignore all
-
+git config --local push.recursesubmodules no
 # udpate
 
 cd src/react-uikit
