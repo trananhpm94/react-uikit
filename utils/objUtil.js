@@ -3,7 +3,7 @@ export const pick = (sourceObject, keys) => {
     return sourceObject;
   }
   const newObject = {};
-  (keys || []).forEach((obj, key) => {
+  (keys || []).forEach(key => {
     newObject[key] = sourceObject[key];
   });
   return newObject;
