@@ -49,7 +49,13 @@ export default class TableData extends Component {
   };
 
   actionGetData = async (props, { page } = { pageSize: 10 }) => {
-    const { allowGetData, paramSearch, service, handleGetDataResponse } = props;
+    const {
+      allowGetData,
+      paramSearch,
+      service,
+      handleGetDataResponse,
+      getPageIndexForSevice,
+    } = props;
     if (!service) {
       return;
     }
@@ -60,7 +66,7 @@ export default class TableData extends Component {
     this.setState({
       loading: true,
     });
-    const res = await service({ page, ...paramSearch });
+    const res = await service({ page: getPageIndexForSevice(page), ...paramSearch });
     const { content, total } = handleGetDataResponse(res);
     const pagination = { ...this.state.pagination };
     pagination.total = total;
