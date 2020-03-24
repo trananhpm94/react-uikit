@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { Table } from 'antd';
+import { getConfig } from 'react-uikit/utils/uikitConfig';
 
 export default class TableData extends Component {
   static defaultProps = {
     allowGetData: true,
+    ...getConfig('component/table/TableData'),
   };
 
   state = {
@@ -47,7 +49,7 @@ export default class TableData extends Component {
   };
 
   actionGetData = async (props, { page } = { pageSize: 10 }) => {
-    const { allowGetData, paramSearch, service } = props;
+    const { allowGetData, paramSearch, service, handleGetDataResponse } = props;
     if (!service) {
       return;
     }
@@ -59,14 +61,12 @@ export default class TableData extends Component {
       loading: true,
     });
     const res = await service({ page, ...paramSearch });
+    const { content, total } = handleGetDataResponse(res);
     const pagination = { ...this.state.pagination };
-    pagination.total = res.data.totalResults;
+    pagination.total = total;
     pagination.current = page;
-    if (this.props.dataTable) {
-      this.props.dataTable(res.data.items);
-    }
     this.setState({
-      data: res.data.items,
+      data: content,
       loading: false,
       pagination,
     });
