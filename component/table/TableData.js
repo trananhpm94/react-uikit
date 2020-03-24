@@ -48,7 +48,9 @@ export default class TableData extends Component {
 
   actionGetData = async (props, { page } = { pageSize: 10 }) => {
     const { allowGetData, paramSearch, service } = props;
-
+    if (!service) {
+      return;
+    }
     if (this.state.loading || !allowGetData) {
       return;
     }
