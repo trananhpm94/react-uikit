@@ -18,10 +18,7 @@ export default class TableData extends Component {
   };
 
   componentDidMount() {
-    const { paramSearch } = this.props;
-    if (!paramSearch) {
-      this.actionGetData(this.props);
-    }
+    this.actionGetData(this.props);
   }
 
   componentWillReceiveProps = nextProps => {
