@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Table } from 'antd';
 import { getConfig } from 'react-uikit/utils/uikitConfig';
-
+import { objectEquals } from '../../utils/functionUtil';
 export default class TableData extends Component {
   static defaultProps = {
     allowGetData: true,
@@ -21,7 +21,7 @@ export default class TableData extends Component {
     this.actionGetData(this.props);
   }
 
-  componentWillReceiveProps = nextProps => {
+  componentWillReceiveProps = (nextProps) => {
     if (nextProps.clear !== 0 && nextProps.clear !== this.props.clear) {
       this.setState({
         data: [],
@@ -36,12 +36,12 @@ export default class TableData extends Component {
       this.actionGetData({ ...nextProps });
       this.setState({ pagination: { ...this.state.pagination, ...{ current: 1 } } });
     }
-    if (nextProps.paramSearch !== this.props.paramSearch) {
+    if (!objectEquals(nextProps.paramSearch, this.props.paramSearch)) {
       this.actionGetData({ ...nextProps });
     }
   };
 
-  handleTableChange = pagination => {
+  handleTableChange = (pagination) => {
     this.actionGetData(this.props, { page: pagination.current });
   };
 
