@@ -79,7 +79,7 @@ export default class TableData extends Component {
     return (
       <Table
         bordered
-        scroll={{ x: true }}
+        scroll={this.props.disableScroll ? undefined : { x: true }}
         loading={this.state.loading}
         pagination={this.state.pagination}
         onChange={this.handleTableChange}
