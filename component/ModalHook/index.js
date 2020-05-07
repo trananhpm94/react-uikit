@@ -3,7 +3,7 @@ import { Modal } from 'antd';
 import useModal from './useModal';
 
 export default ({ id, title = '', ...props }) => {
-  const [modalData, , hiddenModal] = useModal(id);
+  const [modalData = {}, , hiddenModal] = useModal(id);
   return (
     <Modal
       title={title}
