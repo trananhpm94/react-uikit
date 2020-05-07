@@ -1,6 +1,6 @@
 import produce from 'immer';
 
-export const compModalHook = {
+export default {
   name: 'compModalHook',
   state: {},
   reducers: {
