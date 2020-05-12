@@ -3,7 +3,7 @@ import { Select } from 'antd';
 import { objectEquals } from 'react-uikit/utils/functionUtil';
 import { getConfig } from 'react-uikit/utils/uikitConfig';
 const { Option } = Select;
-export default class SelectAjax extends Component {
+export default class SelectMultiAjax extends Component {
   static defaultProps = {
     keyValue: 'id',
     keyLabel: 'name',
@@ -141,6 +141,7 @@ export default class SelectAjax extends Component {
     // this.createFieldObjSelected();
     return (
       <Select
+        mode="multiple"
         showSearch
         style={{ width: '100%' }}
         loading={loading}
