@@ -1,4 +1,4 @@
-export const isPlainObject = o => {
+export const isPlainObject = (o) => {
   return o === null || Array.isArray(o) || typeof o == 'function' ? false : typeof o == 'object';
 };
 
@@ -7,7 +7,7 @@ export const pick = (sourceObject, keys) => {
     return sourceObject;
   }
   const newObject = {};
-  (keys || []).forEach(key => {
+  (keys || []).forEach((key) => {
     if (typeof key === 'string') {
       newObject[key] = sourceObject[key];
     } else if (isPlainObject(key)) {
