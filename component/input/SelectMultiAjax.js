@@ -19,10 +19,12 @@ export default class SelectMultiAjax extends Component {
     data: [],
     loading: false,
     isFirstTime: true,
+    placeholder: false,
   };
 
   componentDidMount = () => {
     this.actionGetData(this.props);
+    this.checkShowCount(this.props);
   };
 
   componentWillReceiveProps = (nextProps) => {
@@ -30,6 +32,7 @@ export default class SelectMultiAjax extends Component {
       this.actionGetData(nextProps);
     }
     this.checkValueNumber(nextProps);
+    this.checkShowCount(nextProps);
   };
 
   setObjSelected = (value) => {
@@ -120,6 +123,12 @@ export default class SelectMultiAjax extends Component {
     );
   };
 
+  checkShowCount = ({ showCount, value }) => {
+    if (showCount && value && Array.isArray(value) && value.length > 0) {
+      this.setState({ placeholder: `Đã chọn ${value.length} giá trị` });
+    }
+  };
+
   valueOpt = (item) => {
     const { keyValue, setValue } = this.props;
     const value = setValue ? setValue(item) : item[keyValue];
@@ -132,13 +141,21 @@ export default class SelectMultiAjax extends Component {
   };
 
   handleSelectChange = (value) => {
+    const { showCount } = this.props;
     this.props.onChange(value);
     this.setObjSelected(value);
+    if (showCount) {
+      if (value.length !== 0) {
+        this.setState({ placeholder: `Đã chọn ${value.length} giá trị` });
+      } else {
+        this.setState({ placeholder: false });
+      }
+    }
   };
 
   render() {
-    const { data, loading } = this.state;
-    // this.createFieldObjSelected();
+    const { data, loading, placeholder } = this.state;
+    const { showCount } = this.props;
     return (
       <Select
         mode="multiple"
@@ -149,6 +166,10 @@ export default class SelectMultiAjax extends Component {
           option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
         }
         {...this.props}
+        placeholder={placeholder || this.props.placeholder}
+        className={`${this.props.className} ${
+          showCount && placeholder ? 'show-count-selection' : ''
+        }`}
         onChange={this.handleSelectChange}
       >
         {data.map((item) => (
