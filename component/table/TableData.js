@@ -63,7 +63,11 @@ export default class TableData extends Component {
     this.setState({
       loading: true,
     });
-    const res = await service({ page: getPageIndexForSevice(page), ...paramSearch });
+    const res = await service({
+      page: getPageIndexForSevice(page) || 0,
+      size: this.state.pagination.pageSize,
+      ...paramSearch,
+    });
     const { content, total } = handleGetDataResponse(res);
     const pagination = { ...this.state.pagination };
     pagination.total = total;
