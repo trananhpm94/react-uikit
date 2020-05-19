@@ -31,6 +31,12 @@ export default class SelectMultiAjax extends Component {
     if (!objectEquals(nextProps.params, this.props.params)) {
       this.actionGetData(nextProps);
     }
+    if (nextProps.resetDataLabel !== this.props.resetDataLabel) {
+      this.setState({
+        placeholder: false,
+      });
+    }
+
     this.checkValueNumber(nextProps);
     this.checkShowCount(nextProps);
   };
