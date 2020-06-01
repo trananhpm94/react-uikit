@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 
 export default (modalId) => {
-  const modalData = useSelector((state) => state.compModalHook[modalId]);
+  let modalData = useSelector((state) => state.compModalHook[modalId]);
   const dispatchModalHook = useDispatch().compModalHook;
 
   const showModal = (data) => {
@@ -11,5 +11,11 @@ export default (modalId) => {
   const hiddenModal = (data) => {
     dispatchModalHook.hiddenModal(modalId, data);
   };
+  if (!modalData) {
+    modalData = {
+      visible: false,
+      data: {}
+    }
+  }
   return [modalData, showModal, hiddenModal];
 };
