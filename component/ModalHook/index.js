@@ -28,3 +28,6 @@ export default ({ id, title = '', ...props }) => {
     </Modal>
   );
 };
+
+
+export { useModal };
