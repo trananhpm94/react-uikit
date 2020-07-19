@@ -8,3 +8,11 @@ export const groupBy = (source, key) => {
 export const distinctByKey = (array, key) => {
   return [...new Map(array.map((item) => [item[key], item])).values()];
 };
+
+
+export const toObj = (source, key) => {
+  return source.reduce((obj, item) => {
+    obj[item[key]] = item;
+    return obj;
+  }, {});
+};
