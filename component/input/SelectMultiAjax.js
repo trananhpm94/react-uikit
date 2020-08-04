@@ -158,6 +158,15 @@ export default class SelectMultiAjax extends Component {
     }
   };
 
+  handleSearch = value => {
+    const { getParamOnSearch } = this.props;
+    if (!getParamOnSearch) {
+      return;
+    }
+    const paramSearch = getParamOnSearch(value);
+    this.actionGetData(this.props, paramSearch);
+  };
+
   render() {
     const { data, loading, placeholder } = this.state;
     const { showCount } = this.props;
@@ -175,6 +184,7 @@ export default class SelectMultiAjax extends Component {
         className={`${this.props.className} ${
           showCount && placeholder ? 'show-count-selection' : ''
         }`}
+        onSearch={this.handleSearch}
         onChange={this.handleSelectChange}
       >
         {data.map((item) => (
