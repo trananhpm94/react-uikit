@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { Table, Form } from 'antd';
 import { BtnEdit, BtnSave, BtnCancel } from '../../button';
 import EditableCell, { EditableContext } from './EditableCell';
+import { getConfig } from 'react-uikit/utils/uikitConfig';
 
 class TableData extends Component {
   static defaultProps = {
