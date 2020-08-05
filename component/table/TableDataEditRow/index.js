@@ -8,6 +8,7 @@ class TableData extends Component {
     allowGetData: true,
     rowKey: 'id',
     customBtnAction: false,
+    ...getConfig('component/table/TableDataEditRow'),
   };
 
   state = {
@@ -18,13 +19,11 @@ class TableData extends Component {
       pageSize: 10,
     },
   };
+
   componentWillMount = () => {};
 
   componentDidMount() {
-    const { paramSearch } = this.props;
-    if (!paramSearch) {
-      this.actionGetData(this.props);
-    }
+    this.actionGetData(this.props);
   }
 
   componentWillReceiveProps = nextProps => {
@@ -85,24 +84,39 @@ class TableData extends Component {
     });
   };
 
-  actionGetData = async (props, { page } = {}) => {
-    const { allowGetData, paramSearch, service } = props;
+  actionGetData = async (props, { page } = { pageSize: 10 }) => {
+    const {
+      allowGetData,
+      paramSearch,
+      service,
+      handleGetDataResponse,
+      getPageIndexForSevice,
+    } = props;
+    if (!service) {
+      return;
+    }
     if (this.state.loading || !allowGetData) {
       return;
     }
+
     this.setState({
       loading: true,
     });
     try {
-      const res = await service({ page, ...paramSearch });
+      const res = await service({
+        page: getPageIndexForSevice(page) || 0,
+        size: this.state.pagination.pageSize,
+        ...paramSearch,
+      });
+      const { content, total } = handleGetDataResponse(res);
       const pagination = { ...this.state.pagination };
-      pagination.total = res.data.totalResults;
+      pagination.total = total;
+      pagination.current = page;
       this.setState({
-        data: res.data.items,
-        loading: false,
+        data: content,
         pagination,
       });
-    } catch (error) {
+    } finally {
       this.setState({
         loading: false,
       });
