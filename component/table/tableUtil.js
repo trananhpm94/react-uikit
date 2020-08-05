@@ -1,5 +1,12 @@
-
-export const actionGetData = async ({props, { page } = { pageSize: 10 }) => {
+export const actionGetData = async ({
+  props,
+  page,
+  pageSize,
+  loading,
+  setLoading,
+  setData,
+  setPagination,
+}) => {
   const {
     allowGetData,
     paramSearch,
@@ -7,35 +14,19 @@ export const actionGetData = async ({props, { page } = { pageSize: 10 }) => {
     handleGetDataResponse,
     getPageIndexForSevice,
   } = props;
-
-  if (!service) {
-    return;
-  }
-
-  if (this.state.loading || !allowGetData) {
-    return;
-  }
-
-  this.setState({
-    loading: true,
-  });
+  if (!service || loading || !allowGetData) return;
+  setLoading(true);
   try {
     const res = await service({
       page: getPageIndexForSevice(page) || 0,
-      size: this.state.pagination.pageSize,
+      size: pageSize,
       ...paramSearch,
     });
     const { content, total } = handleGetDataResponse(res);
-    const pagination = { ...this.state.pagination };
-    pagination.total = total;
-    pagination.current = page;
-    this.setState({
-      data: content,
-      pagination,
-    });
+    const pagination = { total, current: page };
+    setData(content);
+    setPagination(pagination);
   } finally {
-    this.setState({
-      loading: false,
-    });
+    setLoading(false);
   }
 };

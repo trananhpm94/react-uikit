@@ -1,8 +1,13 @@
 import React, { Component, Fragment } from 'react';
-import { Table, Form } from 'antd';
-import { BtnEdit, BtnSave, BtnCancel } from '../../button';
+import { Table, Form, Button } from 'antd';
+// import { BtnEdit, BtnSave, BtnCancel } from '../../button';
 import EditableCell, { EditableContext } from './EditableCell';
 import { getConfig } from 'react-uikit/utils/uikitConfig';
+import { actionGetData } from '../tableUtil';
+
+const BtnEdit = (props) => <Button {...props} title="Sửa"></Button>
+const BtnSave = (props) => <Button {...props} title="Lưu"></Button>
+const BtnCancel = (props) => <Button {...props} title="Hủy"></Button>
 
 class TableData extends Component {
   static defaultProps = {
@@ -21,13 +26,11 @@ class TableData extends Component {
     },
   };
 
-  componentWillMount = () => {};
-
   componentDidMount() {
     this.actionGetData(this.props);
   }
 
-  componentWillReceiveProps = nextProps => {
+  componentWillReceiveProps = (nextProps) => {
     if (nextProps.reload !== this.props.reload) {
       this.actionGetData({ ...nextProps });
     }
@@ -35,6 +38,8 @@ class TableData extends Component {
       this.actionGetData({ ...nextProps });
     }
   };
+
+  isEditing = (record) => record[this.props.rowKey] === this.state.editingKey;
 
   getConfigCol = () => {
     const columns = [...this.props.columns];
@@ -49,7 +54,7 @@ class TableData extends Component {
         const btnAction = editable ? (
           <span>
             <EditableContext.Consumer>
-              {form => <BtnSave onClick={() => this.handleClickSave(form, record[rowKey])} />}
+              {(form) => <BtnSave onClick={() => this.handleClickSave(form, record[rowKey])} />}
             </EditableContext.Consumer>
             <BtnCancel onClick={() => this.handleClickCancel(record[rowKey])} />
           </span>
@@ -69,13 +74,13 @@ class TableData extends Component {
         );
       },
     });
-    return columns.map(col => {
+    return columns.map((col) => {
       if (!col.editable) {
         return col;
       }
       return {
         ...col,
-        onCell: record => ({
+        onCell: (record) => ({
           record,
           renderFormItemEdit: col.renderFormItemEdit,
           dataIndex: col.dataIndex,
@@ -85,43 +90,13 @@ class TableData extends Component {
     });
   };
 
-  actionGetData = async (props, { page } = { pageSize: 10 }) => {
-    const {
-      allowGetData,
-      paramSearch,
-      service,
-      handleGetDataResponse,
-      getPageIndexForSevice,
-    } = props;
-    if (!service) {
-      return;
-    }
-    if (this.state.loading || !allowGetData) {
-      return;
-    }
-
-    this.setState({
-      loading: true,
-    });
-    try {
-      const res = await service({
-        page: getPageIndexForSevice(page) || 0,
-        size: this.state.pagination.pageSize,
-        ...paramSearch,
-      });
-      const { content, total } = handleGetDataResponse(res);
-      const pagination = { ...this.state.pagination };
-      pagination.total = total;
-      pagination.current = page;
-      this.setState({
-        data: content,
-        pagination,
-      });
-    } finally {
-      this.setState({
-        loading: false,
-      });
-    }
+  actionGetData = async (props, { page } = {}) => {
+    const { loading } = this.state;
+    const { pageSize } = this.state.pagination;
+    const setLoading = (value) => this.setState({ loading: value });
+    const setData = (data) => this.setState({ data });
+    const setPagination = (pagination) => this.setState({ pagination });
+    actionGetData({ props, page, pageSize, loading, setLoading, setData, setPagination });
   };
 
   handleClickCancel = () => {
@@ -134,11 +109,9 @@ class TableData extends Component {
 
   handleClickSave = (form, key) => {
     form.validateFields(async (error, row) => {
-      if (error) {
-        return;
-      }
+      if (error) return;
       const newData = [...this.state.data];
-      const index = newData.findIndex(item => key === item[this.props.rowKey]);
+      const index = newData.findIndex((item) => key === item[this.props.rowKey]);
       if (index === -1) {
         console.error(`Không tìm thấy data key[${key}]`);
         return;
@@ -158,11 +131,11 @@ class TableData extends Component {
     });
   };
 
-  handleTableChange = pagination => {
+  handleTableChange = (pagination) => {
     this.actionGetData(this.props, { page: pagination.current });
   };
 
-  isEditing = record => record[this.props.rowKey] === this.state.editingKey;
+  
 
   render() {
     const columns = this.getConfigCol();
