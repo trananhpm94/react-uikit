@@ -6,6 +6,7 @@ export const actionGetData = async ({
   setLoading,
   setData,
   setPagination,
+  setEditingKey,
 }) => {
   const {
     allowGetData,
@@ -13,6 +14,7 @@ export const actionGetData = async ({
     service,
     handleGetDataResponse,
     getPageIndexForSevice,
+    rowKey,
   } = props;
   if (!service || loading || !allowGetData) return;
   setLoading(true);
@@ -26,7 +28,16 @@ export const actionGetData = async ({
     const pagination = { total, current: page };
     setData(content);
     setPagination(pagination);
+    setEditingKeyFromContent({ content, rowKey, setEditingKey });
   } finally {
     setLoading(false);
   }
+};
+
+const setEditingKeyFromContent = ({ content, rowKey, setEditingKey }) => {
+  if (!setEditingKey) return;
+  const itemEditing = content.find((item) => item.editing);
+  if (!itemEditing) return;
+  const editingKey = itemEditing[rowKey];
+  setEditingKey(editingKey);
 };

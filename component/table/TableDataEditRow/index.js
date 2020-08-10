@@ -5,9 +5,9 @@ import EditableCell, { EditableContext } from './EditableCell';
 import { getConfig } from 'react-uikit/utils/uikitConfig';
 import { actionGetData } from '../tableUtil';
 
-const BtnEdit = (props) => <Button {...props} title="Sửa"></Button>
-const BtnSave = (props) => <Button {...props} title="Lưu"></Button>
-const BtnCancel = (props) => <Button {...props} title="Hủy"></Button>
+const BtnEdit = (props) => <Button {...props} title="Sửa"></Button>;
+const BtnSave = (props) => <Button {...props} title="Lưu"></Button>;
+const BtnCancel = (props) => <Button {...props} title="Hủy"></Button>;
 
 class TableData extends Component {
   static defaultProps = {
@@ -96,7 +96,8 @@ class TableData extends Component {
     const setLoading = (value) => this.setState({ loading: value });
     const setData = (data) => this.setState({ data });
     const setPagination = (pagination) => this.setState({ pagination });
-    actionGetData({ props, page, pageSize, loading, setLoading, setData, setPagination });
+    const setEditingKey = (key) => this.setState({ editingKey: key });
+    actionGetData({ props, page, pageSize, loading, setLoading, setData, setPagination, setEditingKey });
   };
 
   handleClickCancel = () => {
@@ -134,8 +135,6 @@ class TableData extends Component {
   handleTableChange = (pagination) => {
     this.actionGetData(this.props, { page: pagination.current });
   };
-
-  
 
   render() {
     const columns = this.getConfigCol();
