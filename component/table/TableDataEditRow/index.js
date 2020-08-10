@@ -5,9 +5,9 @@ import EditableCell, { EditableContext } from './EditableCell';
 import { getConfig } from 'react-uikit/utils/uikitConfig';
 import { actionGetData } from '../tableUtil';
 
-const BtnEdit = (props) => <Button {...props} title="Sửa"></Button>;
-const BtnSave = (props) => <Button {...props} title="Lưu"></Button>;
-const BtnCancel = (props) => <Button {...props} title="Hủy"></Button>;
+const BtnEdit = (props) => <Button {...props} >Sửa</Button>;
+const BtnSave = (props) => <Button {...props} >Lưu</Button>;
+const BtnCancel = (props) => <Button {...props} >Hủy</Button>;
 
 class TableData extends Component {
   static defaultProps = {
