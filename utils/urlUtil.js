@@ -36,7 +36,7 @@ export const getQueryParams = search => {
   return paramObj;
 };
 
-export const udpateQueryParams = (params = {}) => {
+export const updateQueryParams = (params = {}) => {
   const queryParams = createQueryParams({
     _time: new Date().getTime(),
     ...params
@@ -44,3 +44,10 @@ export const udpateQueryParams = (params = {}) => {
   const hrefNoQueryParams = getHrefNoQueryParams();
   window.location.href = hrefNoQueryParams + queryParams;
 };
+
+export const udpateQueryParams = (params = {}) => {
+  return updateQueryParams(params);
+};
+
+
+
