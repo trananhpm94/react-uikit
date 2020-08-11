@@ -5,9 +5,9 @@ import EditableCell, { EditableContext } from './EditableCell';
 import { getConfig } from 'react-uikit/utils/uikitConfig';
 import { actionGetData } from '../tableUtil';
 
-const BtnEdit = (props) => <Button {...props} >Sửa</Button>;
-const BtnSave = (props) => <Button {...props} >Lưu</Button>;
-const BtnCancel = (props) => <Button {...props} >Hủy</Button>;
+const BtnEdit = (props) => <Button {...props}>Sửa</Button>;
+const BtnSave = (props) => <Button {...props}>Lưu</Button>;
+const BtnCancel = (props) => <Button {...props}>Hủy</Button>;
 
 class TableData extends Component {
   static defaultProps = {
@@ -97,7 +97,16 @@ class TableData extends Component {
     const setData = (data) => this.setState({ data });
     const setPagination = (pagination) => this.setState({ pagination });
     const setEditingKey = (key) => this.setState({ editingKey: key });
-    actionGetData({ props, page, pageSize, loading, setLoading, setData, setPagination, setEditingKey });
+    actionGetData({
+      props,
+      page,
+      pageSize,
+      loading,
+      setLoading,
+      setData,
+      setPagination,
+      setEditingKey,
+    });
   };
 
   handleClickCancel = () => {
@@ -122,7 +131,7 @@ class TableData extends Component {
       // handle save  data
       let itemSaved = newItem;
       if (this.props.handleSaveRowData) {
-        itemSaved = await this.props.handleSaveRowData(newItem, item);
+        itemSaved = await this.props.handleSaveRowData(newItem, item, { form });
       }
       if (!itemSaved) {
         return;
