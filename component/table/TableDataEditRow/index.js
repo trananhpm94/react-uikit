@@ -110,6 +110,9 @@ class TableData extends Component {
   };
 
   handleClickCancel = () => {
+    if (this.props.handleCancelEditRowData) {
+      this.props.handleCancelEditRowData(this.state.editingKey);
+    }
     this.setState({ editingKey: '' });
   };
 
