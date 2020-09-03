@@ -1,51 +1,35 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Select } from 'antd';
+import PropTypes from 'prop-types';
 import { objectEquals } from 'react-uikit/utils/functionUtil';
 import { getConfig } from 'react-uikit/utils/uikitConfig';
 
 const { Option } = Select;
-export default class SelectAjax extends Component {
-  static defaultProps = {
-    keyValue: 'id',
-    keyLabel: 'name',
-    handleGetDataResponse: res => res.data.content,
-    allowClear: true,
-    allowGetData: true,
-    allowGetObjSelected: false,
-    typeValue: 'string',
-    disabled: false,
-    ...getConfig('component/input/SelectAjax'),
-  };
-  state = {
-    data: [],
-    loading: false,
-  };
 
-  componentDidMount = () => {
-    this.actionGetData(this.props);
-  };
+const SelectAjax = props => {
+  const {
+    keyValue,
+    keyLabel,
+    setValue,
+    setLabel,
+    getParamOnSearch,
+    onChange,
+    handleGetDataResponse,
+    allowGetObjSelected,
+    allowGetData,
+    form,
+    params,
+    service,
+    typeValue,
+    value,
+  } = props;
 
-  componentWillReceiveProps = nextProps => {
-    if (!objectEquals(nextProps.params, this.props.params)) {
-      this.actionGetData(nextProps);
-    }
-    this.checkValueNumber(nextProps);
-  };
+  const [dataSelectAjax, setDataSelectAjax] = useState([]);
+  const [loadingSelect, setLoadingSelect] = useState(false);
 
-  setObjSelected = value => {
-    const { allowGetObjSelected } = this.props;
-    if (!allowGetObjSelected) {
-      return;
-    }
-    const { setFieldsValue } = this.props.form;
-    setFieldsValue({
-      [this.createFieldObjSelectedName()]:
-        this.state.data.filter(item => value === this.valueOpt(item))[0] || {},
-    });
-  };
+  if (!service) return;
 
-  checkValueNumber = props => {
-    const { value, typeValue, onChange } = props;
+  const checkValueNumber = () => {
     if (typeValue === 'string') {
       return;
     }
@@ -58,101 +42,133 @@ export default class SelectAjax extends Component {
     }
   };
 
-  createFieldObjSelectedName = () => {
-    const { name: fieldName } = this.props['data-__field'];
-    return `objSelected.${fieldName}`;
+  const handleGetDataResponseDefault = res => {
+    return res.data.items;
   };
 
-  createFieldObjSelected = () => {
-    const { allowGetObjSelected } = this.props;
+  const actionGetData = async (paramSearch = {}) => {
+    removeValue();
+    const { handleGetDataResponse = handleGetDataResponseDefault } = props;
+    if (!allowGetData) {
+      setDataSelectAjax([]);
+      return;
+    }
+    setLoadingSelect(true);
+    const res = await service({ ...params, ...paramSearch });
+    const data = handleGetDataResponse(res);
+    setDataSelectAjax(data);
+    setLoadingSelect(false);
+    checkValueNumber(props);
+    setObjSelected(value);
+  };
+
+  const removeValue = () => {
+    // console.log('props', props);
+    // const { name: fieldName } = props['data-__field'];
+    // const { value } = props;
+    // const { setFieldsValue } = props.form;
+    // if (value && setFieldsValue) {
+    //   setFieldsValue({ [fieldName]: undefined });
+    // }
+  };
+
+  const setObjSelected = value => {
     if (!allowGetObjSelected) {
       return;
     }
-    const { getFieldDecorator } = this.props.form;
-    getFieldDecorator(this.createFieldObjSelectedName(), { initialValue: {} });
+    const { setFieldsValue } = form;
+    setFieldsValue({
+      [createFieldObjSelectedName()]:
+        dataSelectAjax.filter(item => value === valueOpt(item))[0] || {},
+    });
   };
 
-  removeValue = () => {
-    const { name: fieldName } = this.props['data-__field'];
-    const { value } = this.props;
-    const { setFieldsValue } = this.props.form;
-    if (value && setFieldsValue) {
-      setFieldsValue({ [fieldName]: undefined });
-    }
+  const createFieldObjSelectedName = () => {
+    const { name: fieldName } = props['data-__field'];
+    return `objSelected.${fieldName}`;
   };
 
-  actionGetData = async (props = {}, paramSearch = {}) => {
-    this.removeValue();
-    const { allowGetData, params, service, handleGetDataResponse } = props;
-    if (!allowGetData) {
-      this.setState({
-        data: [],
-      });
+  const createFieldObjSelected = () => {
+    if (!allowGetObjSelected) {
       return;
     }
-    this.setState({
-      loading: true,
-    });
-    const res = await service({ ...params, ...paramSearch });
-    const data = handleGetDataResponse(res);
-    this.setState(
-      {
-        data,
-        loading: false,
-      },
-      () => {
-        this.checkValueNumber(props);
-        this.setObjSelected(props.value);
-      }
-    );
+    const { getFieldDecorator } = form;
+    getFieldDecorator(createFieldObjSelectedName(), { initialValue: {} });
   };
 
-  valueOpt = item => {
-    const { keyValue, setValue } = this.props;
+  const valueOpt = item => {
     const value = setValue ? setValue(item) : item[keyValue];
     return value;
   };
 
-  labelOpt = item => {
-    const { keyLabel, setLabel } = this.props;
+  const labelOpt = item => {
     return setLabel ? setLabel(item) : item[keyLabel];
   };
 
-  handleSelectChange = value => {
-    this.props.onChange(value);
-    this.setObjSelected(value);
+  const handleSelectChange = value => {
+    onChange(value);
+    setObjSelected(value);
   };
 
-  handleSearch = value => {
-    const { getParamOnSearch } = this.props;
+  const handleSearch = value => {
     if (!getParamOnSearch) {
       return;
     }
     const paramSearch = getParamOnSearch(value);
-    this.actionGetData(this.props, paramSearch);
+    actionGetData(props, paramSearch);
   };
 
-  render() {
-    const { data, loading } = this.state;
-    this.createFieldObjSelected();
-    return (
-      <Select
-        showSearch
-        style={{ width: '100%' }}
-        loading={loading}
-        filterOption={(input, option) =>
-          option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-        }
-        {...this.props}
-        onSearch={this.handleSearch}
-        onChange={this.handleSelectChange}
-      >
-        {data.map(item => (
-          <Option key={this.valueOpt(item)} value={this.valueOpt(item)}>
-            {this.labelOpt(item)}
-          </Option>
-        ))}
-      </Select>
-    );
-  }
-}
+  useEffect(() => {
+    actionGetData();
+  }, [params]);
+
+  return (
+    <Select
+      showSearch
+      style={{ width: '100%' }}
+      loading={loadingSelect}
+      filterOption={(input, option) =>
+        option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      }
+      {...props}
+      onSearch={handleSearch}
+      onChange={handleSelectChange}
+    >
+      {dataSelectAjax.map(item => (
+        <Option key={valueOpt(item)} value={valueOpt(item)}>
+          {labelOpt(item)}
+        </Option>
+      ))}
+    </Select>
+  );
+};
+
+SelectAjax.propTypes = {
+  keyLabel: PropTypes.string,
+  setValue: PropTypes.func,
+  setLabel: PropTypes.func,
+  getParamOnSearch: PropTypes.func,
+  onChange: PropTypes.func,
+  handleGetDataResponse: PropTypes.func,
+  allowGetObjSelected: PropTypes.bool,
+  allowGetData: PropTypes.bool,
+  form: PropTypes.object,
+  params: PropTypes.object,
+  service: PropTypes.any,
+  typeValue: PropTypes.any,
+  value: PropTypes.any,
+};
+
+SelectAjax.defaultProps = {
+  keyValue: 'id',
+  keyLabel: 'label',
+  allowClear: true,
+  allowGetData: true,
+  typeValue: 'string',
+  allowGetObjSelected: false,
+  params: {},
+  service: null,
+  value: null,
+};
+
+export default React.memo(SelectAjax);
