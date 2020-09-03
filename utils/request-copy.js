@@ -7,7 +7,9 @@ export const HOST_API = process.env.REACT_APP_HOST_API || window.location.origin
 
 export const getHeaderAuthorization = token => {
   const t = !token ? window.localStorage.getItem('app.token') : token;
-  return { authorization: `Bearer ${t}` };
+  return {
+    authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlOTYxY2NlYjAyZTE0OGM5YjcxYzg4MTM2MTI3ZGI5ZSIsInVuaXF1ZV9uYW1lIjoiZTk2MWNjZWIwMmUxNDhjOWI3MWM4ODEzNjEyN2RiOWUiLCJqdGkiOiI3NzIzNzUzMS1kZjMwLTQ4ZjEtYmE2NS1lOWI2ZjZhMDBkNjgiLCJpYXQiOiIxNTk5MTI0NDg4ODI0IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiYWRtaW4iLCJuYmYiOjE1OTkxMjQ0ODgsImV4cCI6MTU5OTIxMDg4OCwiaXNzIjoiZWVtLWlkZW50aXR5LXNlcnZpY2UifQ.3jK0BkoDjrG9ThxSVA-HwoWt2O1v5-D5uVWsbyjZYdc`,
+  };
 };
 
 const handleRequestError = (response, props) => {
@@ -19,6 +21,7 @@ const handleRequestError = (response, props) => {
 };
 
 export const request = async ({
+  prefix,
   host = false,
   url = '',
   method = 'get',
@@ -29,7 +32,7 @@ export const request = async ({
 }) => {
   try {
     const result = await axios({
-      url: `${host ? host : HOST_API}${url}`,
+      url: `${host ? host : HOST_API}${prefix}${url}`,
       method,
       data,
       params,
