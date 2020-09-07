@@ -14,6 +14,7 @@ class TableData extends Component {
     allowGetData: true,
     rowKey: 'id',
     customBtnAction: false,
+    pagination: true,
     ...getConfig('component/table/TableDataEditRow'),
   };
 
@@ -155,6 +156,7 @@ class TableData extends Component {
         cell: EditableCell,
       },
     };
+    const pagination = this.props.pagination ? this.state.pagination : false;
     return (
       <EditableContext.Provider value={this.props.form}>
         <Table
@@ -163,7 +165,7 @@ class TableData extends Component {
           scroll={{ x: true }}
           components={components}
           loading={this.state.loading}
-          pagination={this.state.pagination}
+          pagination={pagination}
           onChange={this.handleTableChange}
           dataSource={this.state.data}
           columns={columns}
