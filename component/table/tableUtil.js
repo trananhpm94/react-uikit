@@ -37,7 +37,10 @@ export const actionGetData = async ({
 const setEditingKeyFromContent = ({ content, rowKey, setEditingKey }) => {
   if (!setEditingKey) return;
   const itemEditing = content.find((item) => item.editing);
-  if (!itemEditing) return;
+  if (!itemEditing) {
+    setEditingKey('');
+    return;
+  }
   const editingKey = itemEditing[rowKey];
   setEditingKey(editingKey);
 };
