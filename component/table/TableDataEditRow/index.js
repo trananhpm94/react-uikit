@@ -15,6 +15,7 @@ class TableData extends Component {
     rowKey: 'id',
     customBtnAction: false,
     pagination: true,
+    colActionProps: {},
     ...getConfig('component/table/TableDataEditRow'),
   };
 
@@ -74,6 +75,7 @@ class TableData extends Component {
           </Fragment>
         );
       },
+      ...this.props.colActionProps,
     });
     return columns.map((col) => {
       if (!col.editable) {
