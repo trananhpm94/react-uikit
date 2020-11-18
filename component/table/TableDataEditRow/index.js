@@ -5,9 +5,9 @@ import EditableCell, { EditableContext } from './EditableCell';
 import { getConfig } from 'react-uikit/utils/uikitConfig';
 import { actionGetData } from '../tableUtil';
 
-const BtnEdit = (props) => <Button {...props}>Sửa</Button>;
-const BtnSave = (props) => <Button {...props}>Lưu</Button>;
-const BtnCancel = (props) => <Button {...props}>Hủy</Button>;
+const BtnEdit = props => <Button {...props}>Sửa</Button>;
+const BtnSave = props => <Button {...props}>Lưu</Button>;
+const BtnCancel = props => <Button {...props}>Hủy</Button>;
 
 class TableData extends Component {
   static defaultProps = {
@@ -20,6 +20,7 @@ class TableData extends Component {
   };
 
   state = {
+    isProcessingUpdate: {},
     editingKey: '',
     data: [],
     loading: false,
@@ -32,7 +33,7 @@ class TableData extends Component {
     this.actionGetData(this.props);
   }
 
-  componentWillReceiveProps = (nextProps) => {
+  componentWillReceiveProps = nextProps => {
     if (nextProps.reload !== this.props.reload) {
       this.actionGetData({ ...nextProps });
     }
@@ -41,9 +42,10 @@ class TableData extends Component {
     }
   };
 
-  isEditing = (record) => record[this.props.rowKey] === this.state.editingKey;
+  isEditing = record => record[this.props.rowKey] === this.state.editingKey;
 
   getConfigCol = () => {
+    const { isProcessingUpdate } = this.state;
     const columns = [...this.props.columns];
     const { rowKey } = this.props;
     columns.push({
@@ -56,7 +58,12 @@ class TableData extends Component {
         const btnAction = editable ? (
           <span>
             <EditableContext.Consumer>
-              {(form) => <BtnSave onClick={() => this.handleClickSave(form, record[rowKey])} />}
+              {form => (
+                <BtnSave
+                  onClick={() => this.handleClickSave(form, record[rowKey])}
+                  loading={isProcessingUpdate[rowKey] === true}
+                />
+              )}
             </EditableContext.Consumer>
             <BtnCancel onClick={() => this.handleClickCancel(record[rowKey])} />
           </span>
@@ -77,13 +84,13 @@ class TableData extends Component {
       },
       ...this.props.colActionProps,
     });
-    return columns.map((col) => {
+    return columns.map(col => {
       if (!col.editable) {
         return col;
       }
       return {
         ...col,
-        onCell: (record) => ({
+        onCell: record => ({
           record,
           renderFormItemEdit: col.renderFormItemEdit,
           dataIndex: col.dataIndex,
@@ -96,10 +103,10 @@ class TableData extends Component {
   actionGetData = async (props, { page } = {}) => {
     const { loading } = this.state;
     const { pageSize } = this.state.pagination;
-    const setLoading = (value) => this.setState({ loading: value });
-    const setData = (data) => this.setState({ data });
-    const setPagination = (pagination) => this.setState({ pagination });
-    const setEditingKey = (key) => this.setState({ editingKey: key });
+    const setLoading = value => this.setState({ loading: value });
+    const setData = data => this.setState({ data });
+    const setPagination = pagination => this.setState({ pagination });
+    const setEditingKey = key => this.setState({ editingKey: key });
     actionGetData({
       props,
       page,
@@ -124,30 +131,40 @@ class TableData extends Component {
   }
 
   handleClickSave = (form, key) => {
+    const { isProcessingUpdate } = this.state;
     form.validateFields(async (error, row) => {
       if (error) return;
-      const newData = [...this.state.data];
-      const index = newData.findIndex((item) => key === item[this.props.rowKey]);
-      if (index === -1) {
-        console.error(`Không tìm thấy data key[${key}]`);
-        return;
+
+      this.setState({ isProcessingUpdate: { ...isProcessingUpdate, [this.props.rowKey]: true } });
+
+      try {
+        const newData = [...this.state.data];
+        const index = newData.findIndex(item => key === item[this.props.rowKey]);
+        if (index === -1) {
+          console.error(`Không tìm thấy data key[${key}]`);
+          return;
+        }
+        const item = newData[index];
+        const newItem = { ...item, ...row };
+        // handle save  data
+        let itemSaved = newItem;
+        if (this.props.handleSaveRowData) {
+          itemSaved = await this.props.handleSaveRowData(newItem, item, { form });
+        }
+        if (!itemSaved) {
+          return;
+        }
+        newData.splice(index, 1, itemSaved);
+        this.setState({ data: newData, editingKey: '' });
+      } finally {
+        this.setState({
+          isProcessingUpdate: { ...isProcessingUpdate, [this.props.rowKey]: false },
+        });
       }
-      const item = newData[index];
-      const newItem = { ...item, ...row };
-      // handle save  data
-      let itemSaved = newItem;
-      if (this.props.handleSaveRowData) {
-        itemSaved = await this.props.handleSaveRowData(newItem, item, { form });
-      }
-      if (!itemSaved) {
-        return;
-      }
-      newData.splice(index, 1, itemSaved);
-      this.setState({ data: newData, editingKey: '' });
     });
   };
 
-  handleTableChange = (pagination) => {
+  handleTableChange = pagination => {
     this.actionGetData(this.props, { page: pagination.current });
   };
 
