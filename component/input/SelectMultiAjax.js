@@ -7,7 +7,7 @@ export default class SelectMultiAjax extends Component {
   static defaultProps = {
     keyValue: 'id',
     keyLabel: 'name',
-    handleGetDataResponse: res => res.data.content,
+    handleGetDataResponse: (res) => res.data.content,
     allowClear: true,
     allowGetData: true,
     allowGetObjSelected: false,
@@ -27,7 +27,7 @@ export default class SelectMultiAjax extends Component {
     this.checkShowCount(this.props);
   };
 
-  componentWillReceiveProps = nextProps => {
+  componentWillReceiveProps = (nextProps) => {
     if (!objectEquals(nextProps.params, this.props.params)) {
       this.actionGetData(nextProps);
     }
@@ -40,7 +40,7 @@ export default class SelectMultiAjax extends Component {
     this.checkShowCount(nextProps);
   };
 
-  setObjSelected = value => {
+  setObjSelected = (value) => {
     const { allowGetObjSelected, form } = this.props;
     if (!allowGetObjSelected && !form) {
       return;
@@ -48,11 +48,11 @@ export default class SelectMultiAjax extends Component {
     const { setFieldsValue } = this.props.form;
     setFieldsValue({
       [this.createFieldObjSelectedName()]:
-        this.state.data.filter(item => value === this.valueOpt(item))[0] || {},
+        this.state.data.filter((item) => value === this.valueOpt(item))[0] || {},
     });
   };
 
-  checkValueNumber = props => {
+  checkValueNumber = (props) => {
     const { value, typeValue, onChange } = props;
     if (typeValue === 'string') {
       return;
@@ -65,7 +65,7 @@ export default class SelectMultiAjax extends Component {
       if (typeof value[0] === 'number') {
         return;
       }
-      const valueNumber = value.map(v => parseInt(v));
+      const valueNumber = value.map((v) => parseInt(v));
       onChange(valueNumber);
     }
   };
@@ -92,7 +92,7 @@ export default class SelectMultiAjax extends Component {
     }
   };
 
-  actionGetData = async (props = {}) => {
+  actionGetData = async (props = {}, paramSearch = {}) => {
     if (!this.props.service) {
       return;
     }
@@ -113,8 +113,7 @@ export default class SelectMultiAjax extends Component {
     this.setState({
       loading: true,
     });
-
-    const res = await this.props.service({ ...params, isPagingEnabled: false });
+    const res = await this.props.service({ ...params, ...paramSearch, isPagingEnabled: false });
     const data = handleGetDataResponse(res);
     this.setState(
       {
@@ -134,18 +133,18 @@ export default class SelectMultiAjax extends Component {
     }
   };
 
-  valueOpt = item => {
+  valueOpt = (item) => {
     const { keyValue, setValue } = this.props;
     const value = setValue ? setValue(item) : item[keyValue];
     return value;
   };
 
-  labelOpt = item => {
+  labelOpt = (item) => {
     const { keyLabel, setLabel } = this.props;
     return setLabel ? setLabel(item) : item[keyLabel];
   };
 
-  handleSelectChange = value => {
+  handleSelectChange = (value) => {
     const { showCount } = this.props;
     this.props.onChange(value);
     this.setObjSelected(value);
@@ -158,7 +157,7 @@ export default class SelectMultiAjax extends Component {
     }
   };
 
-  handleSearch = value => {
+  handleSearch = (value) => {
     const { getParamOnSearch } = this.props;
     if (!getParamOnSearch) {
       return;
@@ -187,7 +186,7 @@ export default class SelectMultiAjax extends Component {
         onSearch={this.handleSearch}
         onChange={this.handleSelectChange}
       >
-        {data.map(item => (
+        {data.map((item) => (
           <Option key={this.valueOpt(item)} value={this.valueOpt(item)}>
             {this.labelOpt(item)}
           </Option>
