@@ -8,7 +8,7 @@ export default class SelectAjax extends Component {
   static defaultProps = {
     keyValue: 'id',
     keyLabel: 'name',
-    handleGetDataResponse: res => res.data.content,
+    handleGetDataResponse: (res) => res.data.content,
     allowClear: true,
     allowGetData: true,
     allowGetObjSelected: false,
@@ -25,14 +25,14 @@ export default class SelectAjax extends Component {
     this.actionGetData(this.props);
   };
 
-  componentWillReceiveProps = nextProps => {
+  componentWillReceiveProps = (nextProps) => {
     if (!objectEquals(nextProps.params, this.props.params)) {
       this.actionGetData(nextProps);
     }
     this.checkValueNumber(nextProps);
   };
 
-  setObjSelected = value => {
+  setObjSelected = (value) => {
     const { allowGetObjSelected } = this.props;
     if (!allowGetObjSelected) {
       return;
@@ -40,11 +40,11 @@ export default class SelectAjax extends Component {
     const { setFieldsValue } = this.props.form;
     setFieldsValue({
       [this.createFieldObjSelectedName()]:
-        this.state.data.filter(item => value === this.valueOpt(item))[0] || {},
+        this.state.data.filter((item) => value === this.valueOpt(item))[0] || {},
     });
   };
 
-  checkValueNumber = props => {
+  checkValueNumber = (props) => {
     const { value, typeValue, onChange } = props;
     if (typeValue === 'string') {
       return;
@@ -107,23 +107,23 @@ export default class SelectAjax extends Component {
     );
   };
 
-  valueOpt = item => {
+  valueOpt = (item) => {
     const { keyValue, setValue } = this.props;
     const value = setValue ? setValue(item) : item[keyValue];
     return value;
   };
 
-  labelOpt = item => {
+  labelOpt = (item) => {
     const { keyLabel, setLabel } = this.props;
     return setLabel ? setLabel(item) : item[keyLabel];
   };
 
-  handleSelectChange = value => {
+  handleSelectChange = (value) => {
     this.props.onChange(value);
     this.setObjSelected(value);
   };
 
-  handleSearch = value => {
+  handleSearch = (value) => {
     const { getParamOnSearch } = this.props;
     if (!getParamOnSearch) {
       return;
@@ -147,8 +147,8 @@ export default class SelectAjax extends Component {
         onSearch={this.handleSearch}
         onChange={this.handleSelectChange}
       >
-        {data.map(item => (
-          <Option key={this.valueOpt(item)} value={this.valueOpt(item)}>
+        {data.map((item) => (
+          <Option key={this.valueOpt(item)} value={this.valueOpt(item)} disabled={!!item.disabled}>
             {this.labelOpt(item)}
           </Option>
         ))}

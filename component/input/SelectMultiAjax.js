@@ -187,7 +187,7 @@ export default class SelectMultiAjax extends Component {
         onChange={this.handleSelectChange}
       >
         {data.map((item) => (
-          <Option key={this.valueOpt(item)} value={this.valueOpt(item)}>
+          <Option key={this.valueOpt(item)} value={this.valueOpt(item)} disabled={!!item.disabled}>
             {this.labelOpt(item)}
           </Option>
         ))}
