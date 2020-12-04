@@ -48,42 +48,46 @@ class TableData extends Component {
     const { isProcessingUpdate } = this.state;
     const columns = [...this.props.columns];
     const { rowKey } = this.props;
-    columns.push({
-      title: 'Thao tác',
-      dataIndex: 'operation',
-      key: 'operation',
-      render: (text, record) => {
-        const { editingKey } = this.state;
-        const editable = this.isEditing(record);
-        const btnAction = editable ? (
-          <span>
-            <EditableContext.Consumer>
-              {form => (
-                <BtnSave
-                  onClick={() => this.handleClickSave(form, record[rowKey])}
-                  loading={isProcessingUpdate[rowKey] === true}
-                />
-              )}
-            </EditableContext.Consumer>
-            <BtnCancel onClick={() => this.handleClickCancel(record[rowKey])} />
-          </span>
-        ) : (
-          <BtnEdit
-            disabled={editingKey !== ''}
-            onClick={() => this.handleClickEdit(record[rowKey])}
-          />
-        );
 
-        return (
-          <Fragment>
-            {!this.props.customBtnAction
-              ? btnAction
-              : this.props.customBtnAction({ record, editable, btnAction })}
-          </Fragment>
-        );
-      },
-      ...this.props.colActionProps,
-    });
+    if (this.props.customBtnAction({ record: {} })) {
+      columns.push({
+        title: 'Thao tác',
+        dataIndex: 'operation',
+        key: 'operation',
+        render: (text, record) => {
+          const { editingKey } = this.state;
+          const editable = this.isEditing(record);
+          const btnAction = editable ? (
+            <span>
+              <EditableContext.Consumer>
+                {form => (
+                  <BtnSave
+                    onClick={() => this.handleClickSave(form, record[rowKey])}
+                    loading={isProcessingUpdate[rowKey] === true}
+                  />
+                )}
+              </EditableContext.Consumer>
+              <BtnCancel onClick={() => this.handleClickCancel(record[rowKey])} />
+            </span>
+          ) : (
+            <BtnEdit
+              disabled={editingKey !== ''}
+              onClick={() => this.handleClickEdit(record[rowKey])}
+            />
+          );
+
+          return (
+            <Fragment>
+              {!this.props.customBtnAction
+                ? btnAction
+                : this.props.customBtnAction({ record, btnAction })}
+            </Fragment>
+          );
+        },
+        ...this.props.colActionProps,
+      });
+    }
+
     return columns.map(col => {
       if (!col.editable) {
         return col;
