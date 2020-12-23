@@ -69,7 +69,7 @@ export default class TableData extends Component {
         size: this.state.pagination.pageSize,
         ...paramSearch,
       });
-      const { content, total } = handleGetDataResponse(res);
+      const { content, total } = await handleGetDataResponse(res);
       const pagination = { ...this.state.pagination };
       pagination.total = total;
       pagination.current = page;

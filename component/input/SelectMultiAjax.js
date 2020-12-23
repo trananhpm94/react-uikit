@@ -114,7 +114,7 @@ export default class SelectMultiAjax extends Component {
       loading: true,
     });
     const res = await this.props.service({ ...params, ...paramSearch, isPagingEnabled: false });
-    const data = handleGetDataResponse(res);
+    const data = await handleGetDataResponse(res);
     this.setState(
       {
         data,

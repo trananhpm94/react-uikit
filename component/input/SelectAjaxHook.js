@@ -6,7 +6,7 @@ import { getConfig } from 'react-uikit/utils/uikitConfig';
 
 const { Option } = Select;
 
-const SelectAjax = props => {
+const SelectAjax = (props) => {
   const {
     keyValue,
     keyLabel,
@@ -42,7 +42,7 @@ const SelectAjax = props => {
     }
   };
 
-  const handleGetDataResponseDefault = res => {
+  const handleGetDataResponseDefault = (res) => {
     return res.data.items;
   };
 
@@ -55,7 +55,7 @@ const SelectAjax = props => {
     }
     setLoadingSelect(true);
     const res = await service({ ...params, ...paramSearch });
-    const data = handleGetDataResponse(res);
+    const data = await handleGetDataResponse(res);
     setDataSelectAjax(data);
     setLoadingSelect(false);
     checkValueNumber(props);
@@ -72,14 +72,14 @@ const SelectAjax = props => {
     // }
   };
 
-  const setObjSelected = value => {
+  const setObjSelected = (value) => {
     if (!allowGetObjSelected) {
       return;
     }
     const { setFieldsValue } = form;
     setFieldsValue({
       [createFieldObjSelectedName()]:
-        dataSelectAjax.filter(item => value === valueOpt(item))[0] || {},
+        dataSelectAjax.filter((item) => value === valueOpt(item))[0] || {},
     });
   };
 
@@ -96,21 +96,21 @@ const SelectAjax = props => {
     getFieldDecorator(createFieldObjSelectedName(), { initialValue: {} });
   };
 
-  const valueOpt = item => {
+  const valueOpt = (item) => {
     const value = setValue ? setValue(item) : item[keyValue];
     return value;
   };
 
-  const labelOpt = item => {
+  const labelOpt = (item) => {
     return setLabel ? setLabel(item) : item[keyLabel];
   };
 
-  const handleSelectChange = value => {
+  const handleSelectChange = (value) => {
     onChange(value);
     setObjSelected(value);
   };
 
-  const handleSearch = value => {
+  const handleSearch = (value) => {
     if (!getParamOnSearch) {
       return;
     }
@@ -134,7 +134,7 @@ const SelectAjax = props => {
       onSearch={handleSearch}
       onChange={handleSelectChange}
     >
-      {dataSelectAjax.map(item => (
+      {dataSelectAjax.map((item) => (
         <Option key={valueOpt(item)} value={valueOpt(item)}>
           {labelOpt(item)}
         </Option>

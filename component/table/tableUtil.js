@@ -24,7 +24,7 @@ export const actionGetData = async ({
       size: pageSize,
       ...paramSearch,
     });
-    const { content, total } = handleGetDataResponse(res);
+    const { content, total } = await handleGetDataResponse(res);
     const pagination = { total, current: page };
     setData(content);
     setPagination(pagination);

@@ -94,7 +94,7 @@ export default class SelectAjax extends Component {
       loading: true,
     });
     const res = await service({ ...params, ...paramSearch });
-    const data = handleGetDataResponse(res);
+    const data = await handleGetDataResponse(res);
     this.setState(
       {
         data,
